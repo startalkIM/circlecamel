@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelEventTimelineMapper" >
+
+  <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.entity.CamelEventTimeline" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="event_type" property="eventType" jdbcType="SMALLINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="from_user" property="fromUser" jdbcType="VARCHAR" />
+    <result column="to_user" property="toUser" jdbcType="VARCHAR" />
+    <result column="post_owner" property="postOwner" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from camel_event_timeline
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelEventTimeline" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into camel_event_timeline (uuid,event_type,create_time,from_user,to_user,post_owner
+      )
+    values (#{uuid,jdbcType=VARCHAR}, #{eventType,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP},
+    #{fromUser,jdbcType=VARCHAR},#{toUser,jdbcType=VARCHAR},#{postOwner,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelEventTimeline" >
+    insert into camel_event_timeline
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="eventType != null" >
+        event_type,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="fromUser != null" >
+        from_user,
+      </if>
+      <if test="toUser != null" >
+        to_user,
+      </if>
+      <if test="postOwner != null" >
+        post_owner,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="eventType != null" >
+        eventType,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="fromUser != null" >
+        fromUser,
+      </if>
+      <if test="toUser != null" >
+        toUser,
+      </if>
+      <if test="postOwner != null" >
+        postOwner,
+      </if>
+    </trim>
+  </insert>
+
+</mapper>

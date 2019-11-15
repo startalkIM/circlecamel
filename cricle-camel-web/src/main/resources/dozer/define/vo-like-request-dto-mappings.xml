@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozer.sourceforge.net
+ http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+    <mapping>
+        <class-a>com.qunar.qtalk.cricle.camel.common.vo.LikeReqVo</class-a>
+        <class-b>com.qunar.qtalk.cricle.camel.common.dto.LikeDto</class-b>
+        <field custom-converter="com.qunar.qtalk.cricle.camel.common.converter.OpTypeEnumConverter">
+            <a>opType</a>
+            <b>opTypeEnum</b>
+        </field>
+        <field custom-converter="com.qunar.qtalk.cricle.camel.common.converter.LikeTypeEnumConverter">
+            <a>likeType</a>
+            <b>likeTypeEnum</b>
+        </field>
+    </mapping>
+</mappings>

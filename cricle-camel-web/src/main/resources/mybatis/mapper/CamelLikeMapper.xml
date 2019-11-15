@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelLikeMapper" >
+
+  <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.entity.CamelLike" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="like_uuid" property="likeUuid" jdbcType="VARCHAR" />
+    <result column="like_owner" property="likeOwner" jdbcType="VARCHAR" />
+    <result column="owner_host" property="ownerHost" jdbcType="VARCHAR" />
+    <result column="post_uuid" property="postUuid" jdbcType="VARCHAR" />
+    <result column="comment_uuid" property="commentUuid" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
+    <result column="anonymous_flag" property="anonymousFlag" jdbcType="BIT" />
+    <result column="anonymous" property="anonymous" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, like_uuid, like_owner, owner_host, post_uuid, comment_uuid, delete_flag, update_time, 
+    creat_time, anonymous_flag, anonymous
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from camel_like
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getUserLikeSign" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from camel_like
+    where like_owner = #{userId} and post_uuid = #{postId}
+    <if test="commentId != null and commentId != ''">
+      and comment_uuid = #{commentId}
+    </if>
+    <if test="commentId == null or commentId == ''">
+      and comment_uuid is null
+    </if>
+  </select>
+
+  <update id="updateLikeInfo">
+    UPDATE camel_like SET update_time = #{updateTime,jdbcType=TIMESTAMP},
+    <if test="likeType == 1">
+      delete_flag = 0
+    </if>
+    <if test="likeType == 0">
+      delete_flag = 1
+    </if>
+    WHERE like_owner = #{userId} and post_uuid = #{postId}
+    <if test="commentId != null and commentId != ''">
+      and comment_uuid = #{commentId}
+    </if>
+    <if test="commentId == null or commentId == ''">
+      and comment_uuid is null
+    </if>
+  </update>
+
+  <insert id="insert" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelLike" >
+    insert into camel_like (like_uuid, like_owner, owner_host,
+      post_uuid, comment_uuid, delete_flag, 
+      update_time, creat_time, anonymous_flag, 
+      anonymous)
+    values (#{likeUuid,jdbcType=VARCHAR}, #{likeOwner,jdbcType=VARCHAR}, #{ownerHost,jdbcType=VARCHAR}, 
+      #{postUuid,jdbcType=VARCHAR}, #{commentUuid,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=BIT}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{creatTime,jdbcType=TIMESTAMP}, #{anonymousFlag,jdbcType=BIT}, 
+      #{anonymous,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelLike" >
+    insert into camel_like
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="likeUuid != null" >
+        like_uuid,
+      </if>
+      <if test="likeOwner != null" >
+        like_owner,
+      </if>
+      <if test="ownerHost != null" >
+        owner_host,
+      </if>
+      <if test="postUuid != null" >
+        post_uuid,
+      </if>
+      <if test="commentUuid != null" >
+        comment_uuid,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="creatTime != null" >
+        creat_time,
+      </if>
+      <if test="anonymousFlag != null" >
+        anonymous_flag,
+      </if>
+      <if test="anonymous != null" >
+        anonymous,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="likeUuid != null" >
+        #{likeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="likeOwner != null" >
+        #{likeOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerHost != null" >
+        #{ownerHost,jdbcType=VARCHAR},
+      </if>
+      <if test="postUuid != null" >
+        #{postUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="commentUuid != null" >
+        #{commentUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatTime != null" >
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="anonymousFlag != null" >
+        #{anonymousFlag,jdbcType=BIT},
+      </if>
+      <if test="anonymous != null" >
+        #{anonymous,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelLike" >
+    update camel_like
+    <set >
+      <if test="likeUuid != null" >
+        like_uuid = #{likeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="likeOwner != null" >
+        like_owner = #{likeOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerHost != null" >
+        owner_host = #{ownerHost,jdbcType=VARCHAR},
+      </if>
+      <if test="postUuid != null" >
+        post_uuid = #{postUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="commentUuid != null" >
+        comment_uuid = #{commentUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatTime != null" >
+        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="anonymousFlag != null" >
+        anonymous_flag = #{anonymousFlag,jdbcType=BIT},
+      </if>
+      <if test="anonymous != null" >
+        anonymous = #{anonymous,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelLike" >
+    update camel_like
+    set like_uuid = #{likeUuid,jdbcType=VARCHAR},
+      like_owner = #{likeOwner,jdbcType=VARCHAR},
+      owner_host = #{ownerHost,jdbcType=VARCHAR},
+      post_uuid = #{postUuid,jdbcType=VARCHAR},
+      comment_uuid = #{commentUuid,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=BIT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      anonymous_flag = #{anonymousFlag,jdbcType=BIT},
+      anonymous = #{anonymous,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

@@ -1,0 +1,18 @@
+server:
+  port: 8088
+  context-path: /
+
+spring:
+  aop:
+    proxy-target-class: true
+  output.ansi.enabled: ALWAYS
+
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  type-aliases-package: com.qunar.qtalk.cricle.camel.entity
+
+management:
+  security:
+    enabled: false
+

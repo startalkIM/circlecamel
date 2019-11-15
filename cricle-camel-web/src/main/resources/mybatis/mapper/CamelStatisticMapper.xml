@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelStatisticMapper">
+
+    <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.common.dto.CamelStatisicDto">
+        <result column="data_time" property="dataTime" jdbcType="TIMESTAMP"/>
+        <result column="active_num" property="activeNum" jdbcType="INTEGER"/>
+        <result column="valid_active_num" property="validActiveNum" jdbcType="INTEGER"/>
+        <result column="top_comment_postuuid" property="topCommentPostuuid" jdbcType="VARCHAR"/>
+        <result column="top_like_postuuid" property="topLikePostuuid" jdbcType="VARCHAR"/>
+        <result column="post_realname_num" property="postRealnameNum" jdbcType="INTEGER"/>
+        <result column="post_total_num" property="postTotalNum" jdbcType="INTEGER"/>
+        <result column="post_anonymous_num" property="postAnonymousNum" jdbcType="INTEGER"/>
+        <result column="comment_num" property="commentNum" jdbcType="INTEGER"/>
+        <result column="comment_realname_num" property="commentRealnameNum" jdbcType="INTEGER"/>
+        <result column="comment_anonymous_num" property="commentAnonymousNum" jdbcType="INTEGER"/>
+        <result column="like_num" property="likeNum" jdbcType="INTEGER"/>
+        <result column="brows_time_user" property="browsTimeUser" jdbcType="VARCHAR"/>
+        <result column="post_comments" property="topCommentPost" jdbcType="INTEGER"/>
+        <result column="post_like" property="topLikePost" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        data_time, active_num, valid_active_num, top_comment_postuuid, top_like_postuuid, post_realname_num, post_total_num, post_anonymous_num,
+        comment_num, comment_realname_num, comment_anonymous_num, like_num, brows_time_user, post_comments,post_like
+    </sql>
+    <insert id="insertCamelStatisic" parameterType="com.qunar.qtalk.cricle.camel.common.dto.CamelStatisicDto">
+    INSERT INTO camel_statistic_data
+    (
+    data_time,
+    active_num,
+    valid_active_num,
+    top_comment_postuuid,
+    top_like_postuuid,
+    post_realname_num,
+    post_total_num,
+    post_anonymous_num,
+    comment_num,
+    comment_realname_num,
+    comment_anonymous_num,
+    like_num,
+    brows_time_user,
+    post_comments,
+    post_like)
+    values
+    (#{cst.dataTime},
+    #{cst.activeNum},
+    #{cst.validActiveNum},
+    #{cst.topCommentPostuuid},
+    #{cst.topLikePostuuid},
+    #{cst.postRealnameNum},
+    #{cst.postTotalNum},
+    #{cst.postAnonymousNum},
+    #{cst.commentNum},
+    #{cst.commentRealnameNum},
+    #{cst.commentAnonymousNum},
+    #{cst.likeNum},
+    #{cst.browsTimeUser},
+    #{cst.topCommentPost},
+    #{cst.topLikePost})
+</insert>
+    <select id="selectCSTByTime" parameterType="java.sql.Date"
+            resultType="com.qunar.qtalk.cricle.camel.common.dto.CamelStatisicDto">
+        SELECT
+           <include refid="Base_Column_List"></include>
+        from camel_statistic_data
+        where cast (camel_statistic_data.data_time as DATE )=#{curTime};
+    </select>
+
+    <select id="selectCSTByTimeScorp" parameterType="java.sql.Date" resultType="com.qunar.qtalk.cricle.camel.common.dto.CamelStatisicDto">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        from camel_statistic_data
+        where cast (camel_statistic_data.data_time as DATE ) between #{start} and #{end} order by data_time;
+    </select>
+
+</mapper>

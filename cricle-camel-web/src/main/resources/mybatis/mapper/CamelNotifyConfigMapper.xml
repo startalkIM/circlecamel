@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelNotifyConfigMapper" >
+
+  <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.entity.CamelNotifyConfig" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="notify_key" property="notifyKey" jdbcType="VARCHAR" />
+    <result column="notify_user" property="notifyUser" jdbcType="VARCHAR" />
+    <result column="host" property="host" jdbcType="VARCHAR" />
+    <result column="flag" property="flag" jdbcType="INTEGER" />
+    <result column="update_version" property="updateVersion" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, notify_key, notify_user, host, flag, update_version, update_time
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from camel_notify_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from camel_notify_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelNotifyConfig" >
+    insert into camel_notify_config (notify_key, notify_user, host,
+      flag, update_version, update_time
+      )
+    values (#{notifyKey,jdbcType=VARCHAR}, #{notifyUser,jdbcType=VARCHAR}, #{host,jdbcType=VARCHAR}, 
+      #{flag,jdbcType=SMALLINT}, #{updateVersion,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelNotifyConfig" >
+    insert into camel_notify_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="notifyKey != null" >
+        notify_key,
+      </if>
+      <if test="notifyUser != null" >
+        notify_user,
+      </if>
+      <if test="host != null" >
+        host,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="updateVersion != null" >
+        update_version,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="notifyKey != null" >
+        #{notifyKey,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUser != null" >
+        #{notifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=SMALLINT},
+      </if>
+      <if test="updateVersion != null" >
+        #{updateVersion,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelNotifyConfig" >
+    update camel_notify_config
+    <set >
+      <if test="notifyKey != null" >
+        notify_key = #{notifyKey,jdbcType=VARCHAR},
+      </if>
+      <if test="notifyUser != null" >
+        notify_user = #{notifyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="host != null" >
+        host = #{host,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=SMALLINT},
+      </if>
+      <if test="updateVersion != null" >
+        update_version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelNotifyConfig" >
+    update camel_notify_config
+    set notify_key = #{notifyKey,jdbcType=VARCHAR},
+      notify_user = #{notifyUser,jdbcType=VARCHAR},
+      host = #{host,jdbcType=VARCHAR},
+      flag = #{flag,jdbcType=SMALLINT},
+      update_version = #{updateVersion,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="queryNotifyConfigByUserInfo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from camel_notify_config
+    where notify_user = #{notifyConfigQueryVo.notifyUser} and host = #{notifyConfigQueryVo.host}
+  </select>
+
+  <update id="updateByUserInfo">
+    update camel_notify_config
+    set
+        flag = #{notifyConfigQueryVo.flag},
+        update_version = update_version + 1,
+        update_time = now()
+    where notify_user = #{notifyConfigQueryVo.notifyUser} and
+      host = #{notifyConfigQueryVo.host}
+  </update>
+
+</mapper>

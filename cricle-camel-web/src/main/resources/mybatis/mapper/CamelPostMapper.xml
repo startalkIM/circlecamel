@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelPostMapper">
+
+    <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.entity.CamelPost">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="post_uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="owner_user" property="owner" jdbcType="VARCHAR"/>
+        <result column="owner_host" property="ownerHost" jdbcType="VARCHAR"/>
+        <result column="creat_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="content_text" property="content" jdbcType="VARCHAR"/>
+        <result column="delete_flag" property="isDelete" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="at_list" property="atList" jdbcType="VARCHAR"/>
+        <result column="anonymous_flag" property="isAnonymous" jdbcType="INTEGER"/>
+        <result column="like_num" property="likeNum" jdbcType="INTEGER"/>
+        <result column="anonymous" property="anonymousName" jdbcType="VARCHAR"/>
+        <result column="review_flag" property="reviewStatus" jdbcType="INTEGER"/>
+        <result column="anonymous_photo" property="anonymousPhoto" jdbcType="VARCHAR"/>
+        <result column="comment_num" property="commentsNum" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, post_uuid, owner_user, owner_host, creat_time, content_text, delete_flag, update_time,
+        at_list, anonymous_flag, like_num, anonymous, review_flag, anonymous_photo,comment_num
+    </sql>
+
+    <sql id="getPostListQueryCondition">
+        <if test="postQueryDto.postCreateTime != null">
+            and creat_time <![CDATA[<]]> #{postQueryDto.postCreateTime}
+        </if>
+        <if test="postQueryDto.owner != null and postQueryDto.owner !=''">
+            and owner_user = #{postQueryDto.owner} and anonymous_flag=0
+        </if>
+        <if test="postQueryDto.ownerHost != null and postQueryDto.ownerHost !=''">
+            and owner_host = #{postQueryDto.ownerHost}
+        </if>
+        <if test="postQueryDto.excludePostList != null and postQueryDto.excludePostList.size()>0">
+            and post_uuid not in
+            <foreach collection="postQueryDto.excludePostList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+
+        <!--<if test ="selectType==false">-->
+        <!--and anonymous_flag=0-->
+        <!--</if>-->
+    </sql>
+
+    <select id="selectPostHistory" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post
+        where id <![CDATA[<]]> #{curPostId} and id >= (
+        select min(id) from (select
+        id
+        from camel_post
+        where id <![CDATA[<]]> #{curPostId} and delete_flag = 0 order by id desc limit #{pageSize}) a
+        )
+    </select>
+
+    <select id="selectPostByUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post
+        where owner_user =#{user} and owner_host=#{host} and id <![CDATA[<]]> #{curPostId} and id >= (
+        select min(id) from (select
+        id
+        from camel_post
+        where id <![CDATA[<]]> #{curPostId} and delete_flag = 0 and owner_user=#{user} and owner_host=#{host} order by
+        id
+        desc limit #{pageSize}) a
+        )
+    </select>
+
+    <select id="getPostList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post
+        where id >= (
+        select min(id) from (select
+        id
+        from camel_post
+        where delete_flag = 0
+        <include refid="getPostListQueryCondition"/>
+        order by id desc limit #{postQueryDto.pageSize}) a
+        )
+        <include refid="getPostListQueryCondition"/>
+    </select>
+
+    <select id="getPostByCreateTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post
+        where creat_time = #{createTime}
+        and id <![CDATA[<]]> #{id}
+        <include refid="getPostListQueryCondition"/>
+    </select>
+
+    <sql id="getOwnPostListQueryCondition">
+        <if test="postQueryDto.postCreateTime != null">
+            and creat_time <![CDATA[<]]> #{postQueryDto.postCreateTime}
+        </if>
+        <if test="postQueryDto.owner != null and postQueryDto.owner !=''">
+            and owner_user = #{postQueryDto.owner}
+        </if>
+        <if test="postQueryDto.ownerHost != null and postQueryDto.ownerHost !=''">
+            and owner_host = #{postQueryDto.ownerHost}
+        </if>
+    </sql>
+
+
+    <select id="getOwnPostList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post
+        where id >= (
+        select min(id) from (select
+        id
+        from camel_post
+        where delete_flag = 0
+        <include refid="getOwnPostListQueryCondition"/>
+        order by id desc limit #{postQueryDto.pageSize}) a
+        )
+        <include refid="getOwnPostListQueryCondition"/>
+    </select>
+
+    <select id="getOwnPostByCreateTime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post
+        where creat_time = #{createTime}
+        and id <![CDATA[<]]> #{id}
+        <include refid="getOwnPostListQueryCondition"/>
+    </select>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByPostUUID" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post
+        where post_uuid = #{uuid}
+    </select>
+
+    <select id="selectByPostUUIDList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post
+        where 1=1
+        <if test="postUUIDList != null and postUUIDList.size()>0">
+            AND post_uuid in
+            <foreach collection="postUUIDList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <insert id="insertCamelPost" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelPost">
+        INSERT INTO camel_post
+        (post_uuid,owner_user,owner_host,content_text,
+        anonymous_flag,anonymous,anonymous_photo,creat_time,update_time,at_list,search_content)
+        VALUES
+        (#{camelPostModel.uuid},#{camelPostModel.owner},#{camelPostModel.ownerHost},
+        #{camelPostModel.content},#{camelPostModel.isAnonymous},#{camelPostModel.anonymousName},#{camelPostModel.anonymousPhoto},
+        #{camelPostModel.createTime},#{camelPostModel.updateTime},#{camelPostModel.atList},#{searchContent})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelPost">
+        update camel_post
+        <set>
+            <if test="postUuid != null">
+                post_uuid = #{postUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="owner != null">
+                owner_user = #{owner,jdbcType=VARCHAR},
+            </if>
+            <if test="ownerHost != null">
+                owner_host = #{ownerHost,jdbcType=VARCHAR},
+            </if>
+            <if test="creatTime != null">
+                creat_time = #{creatTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="content != null">
+                content_text = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="atList != null">
+                at_list = #{atList,jdbcType=VARCHAR},
+            </if>
+            <if test="anonymousFlag != null">
+                anonymous_flag = #{anonymousFlag,jdbcType=BIT},
+            </if>
+            <if test="likeNum != null">
+                like_num = #{likeNum,jdbcType=INTEGER},
+            </if>
+            <if test="anonymous != null">
+                anonymous = #{anonymous,jdbcType=VARCHAR},
+            </if>
+            <if test="reviewFlag != null">
+                review_flag = #{reviewFlag,jdbcType=SMALLINT},
+            </if>
+            <if test="anonymousPhoto != null">
+                anonymous_photo = #{anonymousPhoto,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectNewExistPost" resultType="com.qunar.qtalk.cricle.camel.entity.CamelPost"
+            parameterType="java.lang.Integer">
+        SELECT
+           id AS id,
+           post_uuid AS uuid,
+           owner_user AS owner,
+           owner_host AS ownerHost,
+           content_text AS content,
+           creat_time AS createTime,
+           update_time AS updateTime,
+           delete_flag AS isDelete,
+           review_flag AS reviewStatus,
+           anonymous_flag AS isAnonymous,
+           anonymous AS anonymousName,
+           anonymous_photo AS anonymousPhoto,
+           like_num AS likeNum,
+           comment_num AS commentsNum
+        from camel_post where delete_flag =0 ORDER BY id DESC limit #{param}
+  </select>
+
+    <select id="selectDeletePostById" parameterType="java.lang.Integer" resultType="CamelDelete">
+        select
+        id as id,
+        post_uuid as uuid,
+        delete_flag as isDelete
+        from camel_post
+        <trim prefix="where" suffixOverrides="">
+            <if test="startId lt 0 ">
+                id between (select min(id) from camel_post)
+            </if>
+            <if test="startId gt 0">
+                id between #{startId}
+            </if>
+            <if test="endId gt 0">
+                and #{endId}
+            </if>
+            <if test="endId lt 0">
+                and (select max(id) from camel_post)
+            </if>
+            and delete_flag=1
+        </trim>
+    </select>
+
+    <update id="updateDeleteFlag">
+      update camel_post
+      set delete_flag = #{deleteFlag},
+      update_time = now()
+      where post_uuid=#{uuid}
+    </update>
+
+    <select id="selectIdByUUID" parameterType="java.lang.String" resultType="java.lang.Integer">
+      select id from camel_post where post_uuid=#{uuid}
+    </select>
+
+    <select id="selectUsefulPostMaxId" resultType="java.lang.Integer">
+      select max(id) from camel_post where delete_flag = 0
+    </select>
+
+    <select id="getUsefulPostList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post where
+        id BETWEEN #{pageQueryVo.startIndex} AND #{pageQueryVo.endIndex}
+        and delete_flag = 0
+    </select>
+
+    <update id="updatePostLikeNum">
+        UPDATE camel_post SET like_num = #{likeNum}
+        where post_uuid = #{uuid}
+    </update>
+
+    <select id="selectPostByUUID" parameterType="java.lang.String" resultType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post where post_uuid=#{uuid}
+    </select>
+
+    <update id="addCommentNum">
+      UPDATE camel_post set comment_num = comment_num+#{num} where post_uuid=#{uuid}
+    </update>
+
+    <select id="getPostListByTime" parameterType="java.sql.Date" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from camel_post where cast (camel_post.creat_time as DATE )=#{curTime};
+    </select>
+
+    <select id="getAnonymousByPostIdAndUserID" resultType="java.lang.String">
+        SELECT anonymous
+        from camel_post where post_uuid=#{postUUID} and owner_user=#{userID};
+    </select>
+
+    <select id="getPostListBySearchCount" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM camel_post
+        WHERE delete_flag = 0
+        <if test="postOwnerList !=null and postOwnerList.size()>0">
+            AND owner_user IN
+            <foreach collection="postOwnerList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND anonymous_flag = 0
+        </if>
+        <if test="postContent != null and postContent !=''">
+            AND content_text LIKE '%'||#{postContent}||'%'
+        </if>
+        <if test="excludePostList !=null and excludePostList.size()>0">
+            AND post_uuid NOT IN
+            <foreach collection="excludePostList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="startDate != null">
+            AND creat_time >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND creat_time <![CDATA[<=]]> #{endDate}
+        </if>
+    </select>
+
+    <select id="getPostListBySearch" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM camel_post
+        WHERE delete_flag = 0
+        <if test="postOwnerList !=null and postOwnerList.size()>0">
+            AND owner_user IN
+            <foreach collection="postOwnerList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+            AND anonymous_flag = 0
+        </if>
+        <if test="postContent != null and postContent !=''">
+            AND content_text LIKE '%'||#{postContent}||'%'
+        </if>
+        <if test="excludePostList !=null and excludePostList.size()>0">
+            AND post_uuid NOT IN
+            <foreach collection="excludePostList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="startDate != null">
+            AND creat_time >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND creat_time <![CDATA[<=]]> #{endDate}
+        </if>
+        <!-- 排序方式 -->
+        <if test="orderBy==1">
+            ORDER BY creat_time
+        </if>
+        <if test="orderBy==2">
+            ORDER BY comment_num
+        </if>
+        <if test="orderBy==3">
+            ORDER BY like_num
+        </if>
+        <if test="order == 1">
+            ASC
+        </if>
+        <if test="order == 2">
+            DESC
+        </if>
+        LIMIT #{pageQueryVo.pageSize} OFFSET #{pageQueryVo.offSet}
+    </select>
+
+    <select id="getAllUserfulPost" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM camel_post
+        WHERE delete_flag = 0
+    </select>
+
+    <select id="getPostCommentsNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select comment_num from camel_post where post_uuid=#{postUUID};
+</select>
+    <select id="getPostLikeNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select like_num from camel_post where post_uuid=#{postUUID};
+
+    </select>
+
+    <select id="selectPostByIdScorp" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List"/>
+        from camel_post where id >=#{beginId} and id <![CDATA[<=]]> #{endId};
+    </select>
+    <update id="updateSearchContent" >
+       update camel_post
+       set search_content=#{searchContent} where post_uuid=#{postUUID};
+    </update>
+
+
+</mapper>

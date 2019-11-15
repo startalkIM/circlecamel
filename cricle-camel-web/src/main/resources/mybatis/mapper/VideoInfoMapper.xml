@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.VideoInfoMapper" >
+
+  <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.entity.VideoInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="resource_id" property="resourceId" jdbcType="VARCHAR" />
+    <result column="origin_filename" property="originFilename" jdbcType="VARCHAR" />
+    <result column="trans_filename" property="transFilename" jdbcType="VARCHAR" />
+    <result column="origin_file_md5" property="originFileMd5" jdbcType="VARCHAR" />
+    <result column="trans_file_md5" property="transFileMd5" jdbcType="VARCHAR" />
+    <result column="first_thumb" property="firstThumb" jdbcType="VARCHAR" />
+    <result column="origin_file_info" property="originFileInfo" jdbcType="VARCHAR" />
+    <result column="trans_file_info" property="transFileInfo" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, resource_id, origin_filename, trans_filename, origin_file_md5, trans_file_md5, first_thumb,
+    origin_file_info, trans_file_info, status, create_time, update_time
+  </sql>
+
+  <select id="getVideoInfoByMd5" resultMap="BaseResultMap">
+    select
+      <include refid="Base_Column_List" />
+    from video_info
+    where origin_file_md5 = #{videoMd5} or trans_file_md5 = #{videoMd5}
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from video_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from video_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.qunar.qtalk.cricle.camel.entity.VideoInfo" >
+    insert into video_info (resource_id, origin_filename, trans_filename,
+      origin_file_md5, trans_file_md5, first_thumb, origin_file_info,
+      trans_file_info, status, create_time, 
+      update_time)
+    values (#{resourceId,jdbcType=VARCHAR}, #{originFilename,jdbcType=VARCHAR}, #{transFilename,jdbcType=VARCHAR}, 
+      #{originFileMd5,jdbcType=VARCHAR}, #{transFileMd5,jdbcType=VARCHAR},#{firstThumb,jdbcType=VARCHAR}, #{originFileInfo,jdbcType=VARCHAR},
+      #{transFileInfo,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.qunar.qtalk.cricle.camel.entity.VideoInfo" >
+    insert into video_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="resourceId != null" >
+        resource_id,
+      </if>
+      <if test="originFilename != null" >
+        origin_filename,
+      </if>
+      <if test="transFilename != null" >
+        trans_filename,
+      </if>
+      <if test="originFileMd5 != null" >
+        origin_file_md5,
+      </if>
+      <if test="transFileMd5 != null" >
+        trans_file_md5,
+      </if>
+      <if test="firstThumb != null" >
+        first_thumb,
+      </if>
+      <if test="originFileInfo != null" >
+        origin_file_info,
+      </if>
+      <if test="transFileInfo != null" >
+        trans_file_info,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="resourceId != null" >
+        #{resourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="originFilename != null" >
+        #{originFilename,jdbcType=VARCHAR},
+      </if>
+      <if test="transFilename != null" >
+        #{transFilename,jdbcType=VARCHAR},
+      </if>
+      <if test="originFileMd5 != null" >
+        #{originFileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="transFileMd5 != null" >
+        #{transFileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="firstThumb != null" >
+        #{firstThumb,jdbcType=VARCHAR},
+      </if>
+      <if test="originFileInfo != null" >
+        #{originFileInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="transFileInfo != null" >
+        #{transFileInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.qunar.qtalk.cricle.camel.entity.VideoInfo" >
+    update video_info
+    <set >
+      <if test="resourceId != null" >
+        resource_id = #{resourceId,jdbcType=VARCHAR},
+      </if>
+      <if test="originFilename != null" >
+        origin_filename = #{originFilename,jdbcType=VARCHAR},
+      </if>
+      <if test="transFilename != null" >
+        trans_filename = #{transFilename,jdbcType=VARCHAR},
+      </if>
+      <if test="originFileMd5 != null" >
+        origin_file_md5 = #{originFileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="transFileMd5 != null" >
+        trans_file_md5 = #{transFileMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="firstThumb != null" >
+        first_thumb = #{firstThumb,jdbcType=VARCHAR},
+      </if>
+      <if test="originFileInfo != null" >
+        origin_file_info = #{originFileInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="transFileInfo != null" >
+        trans_file_info = #{transFileInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.qunar.qtalk.cricle.camel.entity.VideoInfo" >
+    update video_info
+    set resource_id = #{resourceId,jdbcType=VARCHAR},
+      origin_filename = #{originFilename,jdbcType=VARCHAR},
+      trans_filename = #{transFilename,jdbcType=VARCHAR},
+      origin_file_md5 = #{originFileMd5,jdbcType=VARCHAR},
+      trans_file_md5 = #{transFileMd5,jdbcType=VARCHAR},
+      first_thumb = #{firstThumb,jdbcType=VARCHAR},
+      origin_file_info = #{originFileInfo,jdbcType=VARCHAR},
+      trans_file_info = #{transFileInfo,jdbcType=VARCHAR},
+      status = #{status,jdbcType=SMALLINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+</mapper>

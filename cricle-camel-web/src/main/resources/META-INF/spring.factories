@@ -1,0 +1,3 @@
+# autoConfiguration
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#  com.qunar.qtalk.cricle.camel.common.sedis.SedisAutoConfiguration

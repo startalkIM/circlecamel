@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelSearchMapper">
+
+    <select id="searchPostAndComment" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelSearchType"
+            resultType="com.qunar.qtalk.cricle.camel.entity.CameSearchReturnModel">
+WITH user_potential (users) AS (
+                SELECT user_id
+                FROM host_users
+                WHERE user_id ilike concat('%',#{CamelSearchType.key},'%')
+                        OR user_name ilike concat('%',#{CamelSearchType.key},'%')
+        )
+SELECT return_table.userFromHost AS userFromHost, return_table.fromIsAnonymous AS fromIsAnonymous, return_table.fromAnonymousName AS fromAnonymousName, return_table.fromAnonymousPhoto AS fromAnonymousPhoto, return_table.userTo AS userTo
+        , return_table.userToHost AS userToHost, return_table.toIsAnonymous AS toIsAnonymous, return_table.toAnonymousName AS toAnonymousName, return_table.toAnonymousPhoto AS toAnonymousPhoto, return_table.createTime AS createTime
+        , return_table.postUUID AS postUUID, return_table.eventType AS eventType, return_table.content AS content, return_table.commentUUID AS commentUUID
+        , CASE return_table.fromIsAnonymous WHEN 0 THEN return_table.userFrom ELSE ''  END AS userFrom
+FROM (
+        SELECT owner_user AS userFrom, owner_host AS userFromHost, anonymous_flag AS fromIsAnonymous, anonymous AS fromAnonymousName, anonymous_photo AS fromAnonymousPhoto
+                , '' AS userTo, '' AS userToHost, 0 AS toIsAnonymous, '' AS toAnonymousName, '' AS toAnonymousPhoto
+                , post_uuid AS postUUID, creat_time AS createTime, 3 AS eventType, content_text AS content, '' AS commentUUID
+        FROM camel_post
+        WHERE delete_flag = 0 and ((
+                                       (case when content_text::json->'type' IS NULL then cast(content_text::json->'content' as VARCHAR) ilike concat('%',#{CamelSearchType.key},'%')
+                                             when cast(content_text::json->'type' as VARCHAR)='0' then cast(content_text::json->'content'   as VARCHAR) ilike concat('%',#{CamelSearchType.key},'%')
+                                             when cast(content_text::json->'type' as VARCHAR)='1' then cast(content_text::json->'exContent' as VARCHAR) ilike concat('%',#{CamelSearchType.key},'%')
+                                             when cast(content_text::json->'type' as VARCHAR)='2' then cast(content_text::json->'exContent' as VARCHAR) ilike concat('%',#{CamelSearchType.key},'%')
+                                             when cast(content_text::json->'type' as VARCHAR)='3' then cast(content_text::json->'exContent' as VARCHAR) ilike concat('%',#{CamelSearchType.key},'%') END
+                                         )
+                                       OR  cast (at_list::json->2->'data'->0->'jid' as VARCHAR ) ilike concat ('%',#{CamelSearchType.key},'@ejabhost1','%')
+                                       OR  cast( at_list::json->0->'data'->0->'text' as VARCHAR ) ilike concat('%',#{CamelSearchType.key},'%')
+                                    )
+                                   OR (owner_user IN (SELECT users FROM user_potential) AND anonymous_flag = 0)
+                                   OR (anonymous ilike concat('%',#{CamelSearchType.key},'%') AND anonymous_flag = 1))
+        UNION
+
+        SELECT from_user AS userFrom, from_host AS userFromHost, anonymous_flag AS fromIsAnonymous, anonymous AS fromAnonymousName, anonymous_photo AS fromAnonymousPhoto
+                , to_user AS userTo, to_host AS userToHost, to_anonymous_flag AS toIsAnonymous, to_anonymous AS toAnonymousName, to_anonymous_photo AS toAnonymousPhoto
+                , post_uuid AS postUUID, creat_time AS createTime, 4 AS eventType, content_text AS content, comment_uuid AS commentUUID
+        FROM camel_comment
+        WHERE  delete_flag =0 and (content_text ilike concat('%',#{CamelSearchType.key},'%')
+                OR cast( at_list::json->0->'data'->0->'jid' as VARCHAR ) ilike concat ('%',#{CamelSearchType.key},'@ejabhost1','%')
+                OR cast ( at_list::json->0->'data'->0->'text' as VARCHAR )ilike concat('%',#{CamelSearchType.key},'%')
+                OR (from_user IN (SELECT users FROM user_potential ) AND anonymous_flag = 0)
+                OR (anonymous ilike concat('%',#{CamelSearchType.key},'%') AND anonymous_flag = 1))
+) return_table where createTime &lt; #{CamelSearchType.searchTime}
+ORDER BY createTime DESC LIMIT  #{CamelSearchType.pageNum} OFFSET #{CamelSearchType.startNum};
+    </select>
+
+</mapper>

@@ -1,0 +1,98 @@
+﻿<!DOCTYPE HTML>
+<html lang = "en">
+    <head> 		
+        <meta charset = "UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+        <title>视频播放</title>	
+        <style>
+            #playercontainer{
+                position: absolute;
+                left: 50%;
+                bottom: 10%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                border: 1px solid #eee;
+            }
+            #console{
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                border: 1px solid #eee;
+            }
+        </style>	
+    </head>
+    <body> 		
+        <div id="playercontainer"></div>
+        <script type="text/javascript" src="/cyberplayer/cyberplayer.js"></script>
+        <script type="text/javascript">
+            function getQueryString(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]); return null;
+            }
+
+            var from = getQueryString("from");
+
+            var userAgent = navigator.userAgent;
+            var isMac = function() { 
+                if (null == userAgent) {
+                    return true;
+                }
+                return /macintosh|mac os x/i.test(navigator.userAgent); 
+            }();
+            var isTouch = function() {
+                var regex_match = /(nokia|iphone|android|motorola|^mot-|softbank|foma|docomo|kddi|up.browser|up.link|htc|dopod|blazer|netfront|helio|hosin|huawei|novarra|CoolPad|webos|techfaith|palmsource|blackberry|alcatel|amoi|ktouch|nexian|samsung|^sam-|s[cg]h|^lge|ericsson|philips|sagem|wellcom|bunjalloo|maui|symbian|smartphone|midp|wap|phone|windows ce|iemobile|^spice|^bird|^zte-|longcos|pantech|gionee|^sie-|portalmmm|jigs browser|hiptop|^benq|haier|^lct|operas*mobi|opera*mini|320x320|240x320|176x220)/i;
+                if (null == userAgent) {
+                    return true;
+                }
+                var result = regex_match.exec(userAgent);
+                if (null == result) {
+                    return false
+                } else {
+                    return true
+                }
+            }();
+            function win(attr,value){
+                if(typeof value==='undefined'){
+                    return document.documentElement[attr]||document.body[attr];
+                }
+                document.documentElement[attr]=document.body[attr]=value;
+            }
+            var player = {
+                width:680,
+                height:448,
+				
+				file: from,
+                autostart: true,
+                stretching: "uniform",
+				repeat: false, // 是否重复播放
+                volume: 100,
+                controls: true,
+				logo: { // logo设置
+					linktarget: "_blank",
+					margin: 8,
+					hide: false,
+					position: "top-right", // 位置
+					file: "./img/logo.png" // 图片地址
+				},
+                ak:'ADf961b62aa13a2d4f89d317512e77b9'// 公有云平台注册即可获得accessKey
+            }
+            if(isTouch){
+                var width = win('clientWidth');
+                player.width = width;
+                player.height = width*448/680;
+            }
+
+			 var myPlayer = cyberplayer("playercontainer").setup(player);
+			 myPlayer.onError(function(event){ 
+				
+			});
+
+
+
+
+        </script>
+    </body> 		
+</html>

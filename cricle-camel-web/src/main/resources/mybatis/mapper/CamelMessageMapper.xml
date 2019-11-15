@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelMessageMapper">
+
+    <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.entity.CamelMessage">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="event_type" property="eventType" jdbcType="SMALLINT"/>
+        <result column="from_user" property="fromUser" jdbcType="VARCHAR"/>
+        <result column="from_host" property="fromHost" jdbcType="VARCHAR"/>
+        <result column="to_user" property="toUser" jdbcType="VARCHAR"/>
+        <result column="to_host" property="toHost" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="content_text" property="content" jdbcType="VARCHAR"/>
+        <result column="flag" property="flag" jdbcType="SMALLINT"/>
+        <result column="post_uuid" property="postUuid" jdbcType="VARCHAR"/>
+        <result column="entity_id" property="entityId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, uuid, event_type, from_user, from_host, to_user, to_host, create_time, content_text, flag,
+        post_uuid, entity_id
+    </sql>
+
+    <sql id="getMessageListQueryCondition">
+        <if test="queryDto.createTime != null">
+            and create_time <![CDATA[<]]> #{queryDto.createTime}
+        </if>
+        <if test="queryDto.owner != null and queryDto.owner !=''">
+            and to_user = #{queryDto.owner}
+        </if>
+        <if test="queryDto.ownerHost != null and queryDto.ownerHost !=''">
+            and to_host = #{queryDto.ownerHost}
+        </if>
+        <if test="queryDto.eventType != null and queryDto.eventType.size>0">
+            and event_type in
+            <foreach collection="queryDto.eventType" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_message
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getByEventTypeAndEntityId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_message
+        where event_type = #{eventType} and entity_id = #{entityId}
+    </select>
+
+    <select id="getMessageList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_message
+        where flag = 0 and to_user = #{messageQueryDto.user} and to_host = #{messageQueryDto.host}
+        <if test="messageQueryDto.time != null">
+            and create_time <![CDATA[>=]]> #{messageQueryDto.time}
+        </if>
+         order by create_time desc
+    </select>
+
+    <insert id="insert" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelMessage">
+        insert into camel_message (uuid, event_type, from_user,
+        from_host, to_user, to_host,
+        create_time, content_text, flag,
+        post_uuid, entity_id)
+        values (#{uuid,jdbcType=VARCHAR}, #{eventType,jdbcType=SMALLINT}, #{fromUser,jdbcType=VARCHAR},
+        #{fromHost,jdbcType=VARCHAR}, #{toUser,jdbcType=VARCHAR}, #{toHost,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{content,jdbcType=VARCHAR}, #{flag,jdbcType=SMALLINT},
+        #{postUuid,jdbcType=VARCHAR}, #{entityId,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelMessage">
+        insert into camel_message
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="uuid != null" >
+                uuid,
+            </if>
+            <if test="eventType != null" >
+                event_type,
+            </if>
+            <if test="fromUser != null" >
+                from_user,
+            </if>
+            <if test="fromHost != null" >
+                from_host,
+            </if>
+            <if test="toUser != null" >
+                to_user,
+            </if>
+            <if test="toHost != null" >
+                to_host,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="content != null" >
+                content_text,
+            </if>
+            <if test="flag != null" >
+                flag,
+            </if>
+            <if test="postUuid != null" >
+                post_uuid,
+            </if>
+            <if test="entityId != null" >
+                entity_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="uuid != null" >
+                #{uuid,jdbcType=VARCHAR},
+            </if>
+            <if test="eventType != null" >
+                #{eventType,jdbcType=SMALLINT},
+            </if>
+            <if test="fromUser != null" >
+                #{fromUser,jdbcType=VARCHAR},
+            </if>
+            <if test="fromHost != null" >
+                #{fromHost,jdbcType=VARCHAR},
+            </if>
+            <if test="toUser != null" >
+                #{toUser,jdbcType=VARCHAR},
+            </if>
+            <if test="toHost != null" >
+                #{toHost,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="content != null" >
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null" >
+                #{flag,jdbcType=SMALLINT},
+            </if>
+            <if test="postUuid != null" >
+                #{postUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="entityId != null" >
+                #{entityId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelMessage">
+        update camel_message
+        <set >
+            <if test="uuid != null" >
+                uuid = #{uuid,jdbcType=VARCHAR},
+            </if>
+            <if test="eventType != null" >
+                event_type = #{eventType,jdbcType=SMALLINT},
+            </if>
+            <if test="fromUser != null" >
+                from_user = #{fromUser,jdbcType=VARCHAR},
+            </if>
+            <if test="fromHost != null" >
+                from_host = #{fromHost,jdbcType=VARCHAR},
+            </if>
+            <if test="toUser != null" >
+                to_user = #{toUser,jdbcType=VARCHAR},
+            </if>
+            <if test="toHost != null" >
+                to_host = #{toHost,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="content != null" >
+                content_text = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="flag != null" >
+                flag = #{flag,jdbcType=SMALLINT},
+            </if>
+            <if test="postUuid != null" >
+                post_uuid = #{postUuid,jdbcType=VARCHAR},
+            </if>
+            <if test="entityId != null" >
+                entity_id = #{entityId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelMessage">
+        update camel_message
+        set uuid = #{uuid,jdbcType=VARCHAR},
+            event_type = #{eventType,jdbcType=SMALLINT},
+            from_user = #{fromUser,jdbcType=VARCHAR},
+            from_host = #{fromHost,jdbcType=VARCHAR},
+            to_user = #{toUser,jdbcType=VARCHAR},
+            to_host = #{toHost,jdbcType=VARCHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            content_text = #{content,jdbcType=VARCHAR},
+            flag = #{flag,jdbcType=SMALLINT},
+            post_uuid = #{postUuid,jdbcType=VARCHAR},
+            entity_id = #{entityId,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateReadFlagByTime">
+        UPDATE camel_message SET flag = 1 WHERE to_user = #{user} and to_host=#{host} and  create_time<![CDATA[<=]]> #{curTime} and flag <![CDATA[<]]> 1
+    </update>
+
+    <select id="selectMessageListByQueryDto" resultMap="BaseResultMap">
+        select
+          <include refid="Base_Column_List"/>
+        from camel_message
+        where id >=
+        (select min(id) from
+             (select id from camel_message
+        where flag in (0,1) <include refid="getMessageListQueryCondition"/> order by id desc limit #{queryDto.pageSize})a)
+        <include refid="getMessageListQueryCondition"/>
+    </select>
+
+    <select id="selectMessageListByCreatetime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_message
+        where create_time = #{createTime}
+        and id <![CDATA[<]]> #{id}
+        <include refid="getMessageListQueryCondition"/>
+    </select>
+
+
+    <update id="updatePostAtMessage2DeleteFlag">
+        update camel_message set flag = 2
+        where post_uuid =#{postUUID} and event_type = #{eventType} and flag <![CDATA[<]]> 2
+    </update>
+
+
+    <update id="updateCommentAtMessage2DeleteFlag">
+        update camel_message set flag = 2
+        where entity_id =#{commentUUID} and event_type = #{eventType} and flag <![CDATA[<]]> 2
+    </update>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelAuthMapper">
+
+    <select id="selectUserModel" resultType="com.qunar.qtalk.cricle.camel.entity.CamelUserModel">
+        SELECT
+            user_id AS userName,
+            host_id AS userHost,
+            user_name AS userCName,
+            hire_type AS hireType,
+            dep1 AS dep1
+        FROM host_users where user_id=#{userId} and host_id=#{hostId}
+    </select>
+
+    <select id="selectLegalUser" resultType="com.qunar.qtalk.cricle.camel.entity.CamelUserModel">
+        SELECT
+            user_id AS userName,
+            host_id AS userHost,
+            user_name AS userCName,
+            hire_type AS hireType
+        from host_users where (hire_type='正式' or hire_type='实习' or hire_type='实习（HC）')  and hire_flag=1  and user_type!='R'
+    </select>
+
+    <select id="getUserByUserName" resultType="com.qunar.qtalk.cricle.camel.entity.CamelUserModel">
+        SELECT
+            user_id AS userName,
+            host_id AS userHost,
+            user_name AS userCName,
+            hire_type AS hireType
+        from host_users where user_name LIKE '%'||#{userName}||'%'
+    </select>
+
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelRetainMapper">
+
+    <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.common.dto.CamelRetainModel">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="INTEGER"/>
+        <result column="brow_user" property="browUser"
+                typeHandler="com.qunar.qtalk.cricle.camel.common.handler.ArryTypeHandler"/>
+        <result column="retain_rate" property="retainRate" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,create_time, brow_user, retain_rate
+    </sql>
+
+    <insert id="insertCamelRetainModel" parameterType="com.qunar.qtalk.cricle.camel.common.dto.CamelRetainModel">
+       INSERT INTO  camel_user_retain  (create_time, brow_user, retain_rate) values(
+       #{camelRetainModel.createTime,jdbcType=TIMESTAMP},
+       #{camelRetainModel.browUser,typeHandler=com.qunar.qtalk.cricle.camel.common.handler.ArryTypeHandler},
+       #{camelRetainModel.retainRate,jdbcType=VARCHAR}
+       )
+    </insert>
+
+
+    <select id="selectCamelRetainByTime" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from camel_user_retain WHERE cast(create_time as DATE)=#{time};
+    </select>
+    <update id="updateReatinRateById">
+    update camel_user_retain set retain_rate=#{retainRate} where id=#{id};
+</update>
+
+    <select id="selectCamelRetain" resultMap="BaseResultMap">
+        select  <include refid="Base_Column_List"/>
+        from camel_user_retain WHERE cast(create_time as DATE) between #{begin} and #{end} order by create_time;
+    </select>
+
+</mapper>

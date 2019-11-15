@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelAnonymousMapper">
+
+    <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.entity.CamelAnonymous">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="anonymous" property="anonymous" jdbcType="VARCHAR"/>
+        <result column="anonymous_photo" property="anonymousPhoto" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id, anonymous, anonymous_photo
+    </sql>
+
+    <select id="countAnonymous" resultType="int">
+        select
+         count(*)
+        from camel_anonymous
+    </select>
+
+    <select id="getAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_anonymous
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_anonymous
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from camel_anonymous
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelAnonymous">
+        update camel_anonymous
+        <set>
+            <if test="anonymous != null">
+                anonymous = #{anonymous,jdbcType=VARCHAR},
+            </if>
+            <if test="anonymousPhoto != null">
+                anonymous_photo = #{anonymousPhoto,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelAnonymous">
+        update camel_anonymous
+        set anonymous = #{anonymous,jdbcType=VARCHAR},
+          anonymous_photo = #{anonymousPhoto,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="getCamelAnonymousByAnyonmous" resultType="com.qunar.qtalk.cricle.camel.entity.CamelAnonymous" parameterType="java.lang.String">
+        select <include refid="Base_Column_List"/>
+         from camel_anonymous where anonymous = #{anyonmous}
+    </select>
+
+    <insert id="insertAnonymousPhoto" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelAnonymous">
+        insert into camel_anonymous (anonymous,anonymous_photo) values (#{anonymous,jdbcType=VARCHAR},#{anonymousPhoto,jdbcType=VARCHAR});
+    </insert>
+</mapper>

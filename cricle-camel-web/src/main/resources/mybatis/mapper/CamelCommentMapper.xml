@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qunar.qtalk.cricle.camel.mapper.CamelCommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.qunar.qtalk.cricle.camel.entity.CamelComment">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="comment_uuid" property="commentUUID" jdbcType="VARCHAR"/>
+        <result column="post_uuid" property="postUUID" jdbcType="VARCHAR"/>
+        <result column="parent_comment_uuid" property="parentCommentUUID" jdbcType="VARCHAR"/>
+        <result column="content_text" property="content" jdbcType="VARCHAR"/>
+        <result column="from_user" property="fromUser" jdbcType="VARCHAR"/>
+        <result column="to_user" property="toUser" jdbcType="VARCHAR"/>
+        <result column="from_host" property="fromHost" jdbcType="VARCHAR"/>
+        <result column="to_host" property="toHost" jdbcType="VARCHAR"/>
+        <result column="creat_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="anonymous_flag" property="isAnonymous" jdbcType="SMALLINT"/>
+        <result column="anonymous" property="anonymousName" jdbcType="VARCHAR"/>
+        <result column="like_num" property="likeNum" jdbcType="INTEGER"/>
+        <result column="delete_flag" property="isDelete" jdbcType="SMALLINT"/>
+        <result column="review_flag" property="reviewStatus" jdbcType="SMALLINT"/>
+        <result column="to_anonymous_flag" property="toisAnonymous" jdbcType="SMALLINT"/>
+        <result column="to_anonymous" property="toAnonymousName" jdbcType="VARCHAR"/>
+        <result column="to_anonymous_photo" property="toAnonymousPhoto" jdbcType="VARCHAR"/>
+        <result column="post_owner" property="postOwner" jdbcType="VARCHAR"/>
+        <result column="post_owner_host" property="postOwnerHost" jdbcType="VARCHAR"/>
+        <result column="superparent_comment_uuid" property="superParentUUID" jdbcType="VARCHAR"/>
+        <result column="comment_status" property="commentStatus" jdbcType="SMALLINT"/>
+        <result column="at_list" property="atList" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, comment_uuid, post_uuid, parent_comment_uuid, content_text, from_user, to_user, from_host,
+        to_host, creat_time, update_time, anonymous_flag, like_num, delete_flag, review_flag,
+        anonymous,anonymous_photo,to_anonymous_flag,to_anonymous,to_anonymous_photo,post_owner,post_owner_host,superparent_comment_uuid,comment_status,at_list
+    </sql>
+
+    <sql id="getCommentListQueryCondition">
+        <if test="commentQueryDto.commentCreateTime != null">
+            and creat_time <![CDATA[<]]> #{commentQueryDto.commentCreateTime}
+        </if>
+        <if test="commentQueryDto.owner != null and commentQueryDto.owner !=''">
+            and from_user = #{commentQueryDto.owner} and anonymous_flag=0
+        </if>
+        <if test="commentQueryDto.ownerHost != null and commentQueryDto.ownerHost !=''">
+            and from_host = #{commentQueryDto.ownerHost}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insertSelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelComment">
+        insert into camel_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="commentUUID != null">
+                comment_uuid,
+            </if>
+            <if test="postUUID != null">
+                post_uuid,
+            </if>
+            <if test="parentCommentUUID != null">
+                parent_comment_uuid,
+            </if>
+            <if test="content != null">
+                content_text,
+            </if>
+            <if test="fromUser != null">
+                from_user,
+            </if>
+            <if test="toUser != null">
+                to_user,
+            </if>
+            <if test="fromHost != null">
+                from_host,
+            </if>
+            <if test="toHost != null">
+                to_host,
+            </if>
+            <if test="createTime != null">
+                creat_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="isAnonymous != null">
+                anonymous_flag,
+            </if>
+            <if test="likeNum != null">
+                like_num,
+            </if>
+            <if test="isDelete != null">
+                delete_flag,
+            </if>
+            <if test="reviewStatus != null">
+                review_flag,
+            </if>
+            <if test="anonymousName != null">
+                anonymous,
+            </if>
+            <if test="anonymousPhoto != null">
+                anonymous_photo,
+            </if>
+
+            <if test="toisAnonymous != null">
+                to_anonymous_flag,
+            </if>
+            <if test="toAnonymousName != null">
+                to_anonymous,
+            </if>
+            <if test="toAnonymousPhoto != null">
+                to_anonymous_photo,
+            </if>
+            <if test="postOwner != null">
+                post_owner,
+            </if>
+            <if test="postOwnerHost != null">
+                post_owner_host,
+            </if>
+            <if test="superParentUUID != null">
+                superparent_comment_uuid,
+            </if>
+            <if test="atList != null">
+                at_list
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="commentUUID != null">
+                #{commentUUID,jdbcType=VARCHAR},
+            </if>
+            <if test="postUUID != null">
+                #{postUUID,jdbcType=VARCHAR},
+            </if>
+            <if test="parentCommentUUID != null">
+                #{parentCommentUUID,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="fromUser != null">
+                #{fromUser,jdbcType=VARCHAR},
+            </if>
+            <if test="toUser != null">
+                #{toUser,jdbcType=VARCHAR},
+            </if>
+            <if test="fromHost != null">
+                #{fromHost,jdbcType=VARCHAR},
+            </if>
+            <if test="toHost != null">
+                #{toHost,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isAnonymous != null">
+                #{isAnonymous,jdbcType=BIT},
+            </if>
+            <if test="likeNum != null">
+                #{likeNum,jdbcType=INTEGER},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=BIT},
+            </if>
+            <if test="reviewStatus != null">
+                #{reviewStatus,jdbcType=SMALLINT},
+            </if>
+            <if test="anonymousName != null">
+                #{anonymousName,jdbcType=VARCHAR},
+            </if>
+            <if test="anonymousPhoto != null">
+                #{anonymousPhoto,jdbcType=VARCHAR},
+            </if>
+
+            <if test="toisAnonymous != null">
+                #{toisAnonymous,jdbcType=SMALLINT},
+            </if>
+            <if test="toAnonymousName != null">
+                #{toAnonymousName,jdbcType=VARCHAR},
+            </if>
+            <if test="toAnonymousPhoto != null">
+                #{toAnonymousPhoto,jdbcType=VARCHAR},
+            </if>
+            <if test="postOwner != null">
+                #{postOwner,jdbcType=VARCHAR},
+            </if>
+            <if test="postOwnerHost != null">
+                #{postOwnerHost,jdbcType=VARCHAR},
+            </if>
+            <if test="superParentUUID != null">
+                #{superParentUUID,jdbcType=VARCHAR},
+            </if>
+            <if test="atList != null">
+                #{atList,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.qunar.qtalk.cricle.camel.entity.CamelComment">
+        update camel_comment
+        <set>
+            <if test="commentUUID != null">
+                comment_uuid = #{commentUUID,jdbcType=VARCHAR},
+            </if>
+            <if test="postUUID != null">
+                post_uuid = #{postUUID,jdbcType=VARCHAR},
+            </if>
+            <if test="parentCommentUUID != null">
+                parent_comment_uuid = #{parentCommentUUID,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content_text = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="fromUser != null">
+                from_user = #{fromUser,jdbcType=VARCHAR},
+            </if>
+            <if test="toUser != null">
+                to_user = #{toUser,jdbcType=VARCHAR},
+            </if>
+            <if test="fromHost != null">
+                from_host = #{fromHost,jdbcType=VARCHAR},
+            </if>
+            <if test="toHost != null">
+                to_host = #{toHost,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                creat_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isAnonymous != null">
+                anonymous_flag = #{isAnonymous,jdbcType=BIT},
+            </if>
+            <if test="likeNum != null">
+                like_num = #{likeNum,jdbcType=INTEGER},
+            </if>
+            <if test="isDelete != null">
+                delete_flag = #{isDelete,jdbcType=BIT},
+            </if>
+            <if test="reviewStatus != null">
+                review_flag = #{reviewStatus,jdbcType=SMALLINT},
+            </if>
+            <if test="anonymousName != null">
+                anonymous = #{anonymousName,jdbcType=VARCHAR},
+            </if>
+            <if test="anonymousPhoto != null">
+                anonymous_photo = #{anonymousPhoto,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectHotComments"
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from camel_comment where post_uuid=#{postUUID} and delete_flag=0 and like_num >=#{threshold} ORDER BY like_num
+        desc limit #{num}
+    </select>
+
+    <select id="selectWithoutTargetComment" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from camel_comment where post_uuid=#{postUUID} and delete_flag=0
+        <if test="commentUUIDList != null and commentUUIDList.size()>0">
+            and comment_uuid not in
+            <foreach collection="commentUUIDList" open="(" close=")" separator="," item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY creat_time limit #{num}
+    </select>
+
+    <select id="selectCommentHistory" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment
+        where post_uuid =#{postUUID} and id <![CDATA[<]]> #{curentId} and id >= (
+        select min(id) from (select
+        id
+        from camel_comment
+        where id <![CDATA[<]]> #{curentId} and post_uuid=#{postUUID} and delete_flag=0 order by id desc limit #{num}) a
+        ) ORDER BY update_time desc
+    </select>
+
+    <select id="selectByCommentUUID" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment
+        where comment_uuid =#{commentUUID}
+    </select>
+    <select id="selectAllComments" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM camel_comment;
+    </select>
+    <select id="selectCommentByParentUUID" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM camel_comment
+        where comment_uuid = #{parentUUID};
+    </select>
+    <select id="selectByCommentUUIDList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment
+        <where>
+            delete_flag = 0
+            <if test="commentUUIDList != null and commentUUIDList.size()>0">
+                and comment_uuid in
+                <foreach collection="commentUUIDList" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectMaxIdByUUID" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select max(id) from camel_comment where post_uuid=#{postUUID}
+    </select>
+
+    <select id="getUsefulCommentMaxId" resultType="java.lang.Integer">
+        select max(id) from camel_comment where delete_flag = 0
+    </select>
+
+    <select id="getUsefulCommentList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment where
+        id BETWEEN #{pageQueryVo.startIndex} AND #{pageQueryVo.endIndex}
+        and delete_flag = 0
+    </select>
+
+    <update id="deleteCommentByUUID" parameterType="java.lang.String">
+        update camel_comment set delete_flag = 1,comment_status=1 where comment_uuid=#{commentUUID}
+    </update>
+
+
+    <select id="selectExistChild" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        FROM camel_comment WHERE superparent_comment_uuid = #{superParent} AND delete_flag = 0
+    </select>
+
+    <update id="updateCommentStatus">
+        update camel_comment
+        set comment_status = #{status}
+        where comment_uuid = #{commentUUID}
+    </update>
+
+    <update id="updateLikeNumByUUID">
+        update camel_comment set like_num = #{likeNum} where comment_uuid=#{commentUUID}
+    </update>
+
+    <select id="selectDeleteFlag" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select delete_flag from camel_comment where comment_uuid = #{commentUUID};
+    </select>
+
+    <select id="getCommentListByTime" parameterType="java.sql.Date" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from camel_comment where cast (camel_comment.creat_time as DATE )=#{curTime};
+    </select>
+
+    <select id="getAnonymousByPostIdAndUserID" resultType="java.lang.String">
+        SELECT anonymous from camel_comment where post_uuid=#{postUUID} and from_user=#{userID};
+    </select>
+
+    <update id="updateParentsUUID" parameterType="java.util.List">
+        <foreach collection="comments" item="item" separator=";">
+            update camel_comment
+            set superparent_comment_uuid=#{item.superParentUUID}
+            where comment_uuid = #{item.commentUUID};
+        </foreach>
+    </update>
+
+    <select id="selectChildComments" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment where superparent_comment_uuid = #{superParentUUID} and post_uuid=#{postUUID} order by id;
+    </select>
+
+    <select id="selectCommentHistoryV2" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment
+        where post_uuid =#{postUUID} and (parent_comment_uuid is null or parent_comment_uuid='') and id <![CDATA[<]]>
+        #{curentId} and id >= (
+        select min(id) from (select
+        id
+        from camel_comment
+        where id <![CDATA[<]]> #{curentId} and post_uuid=#{postUUID} AND (parent_comment_uuid is null or
+        parent_comment_uuid='') and comment_status!=2 order by id desc limit #{num}) a
+        ) ORDER BY update_time desc
+    </select>
+
+    <sql id="excludeHotComments">
+        and comment_uuid not in
+        <foreach item="item" index="index" collection="list"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </sql>
+
+    <select id="selectCommentHistoryExcludeHotCommentV2" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment
+        where post_uuid =#{postUUID}
+        <include refid="excludeHotComments"/>
+        and (parent_comment_uuid is null or parent_comment_uuid='') and id <![CDATA[<]]> #{curentId} and id >= (
+        select min(id) from (select
+        id
+        from camel_comment
+        where id <![CDATA[<]]> #{curentId} and post_uuid=#{postUUID} AND (parent_comment_uuid is null or
+        parent_comment_uuid='') and comment_status!=2
+        <include refid="excludeHotComments"/>
+        order by id desc limit #{num}) a
+        ) ORDER BY update_time desc
+    </select>
+
+    <select id="getCommentLikeNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+      select like_num from camel_comment where comment_uuid=#{commentUUID};
+    </select>
+
+    <select id="selectCommentListByPostUUID" resultMap="BaseResultMap">
+        select
+          <include refid="Base_Column_List"/>
+        from camel_comment where post_uuid =#{postUUID} and delete_flag=0
+    </select>
+
+    <select id="selectShowCommentListByPostUUID" resultMap="BaseResultMap">
+        select
+          <include refid="Base_Column_List"/>
+        from camel_comment where post_uuid =#{postUUID} and comment_status!=2
+    </select>
+
+    <select id="selectSuperParentCommentUser" parameterType="java.lang.String" resultType="java.lang.String">
+        select distinct from_user from camel_comment where post_uuid=#{postUUID} and delete_flag=0
+        and(superparent_comment_uuid='' or superparent_comment_uuid is null);
+    </select>
+
+    <select id="selectUserBySuperParentUUID" resultType="java.lang.String">
+        select distinct from_user from camel_comment where post_uuid=#{postUUID} and delete_flag=0
+        and  superparent_comment_uuid= #{superParentUUID};
+    </select>
+
+
+    <select id="selectCommentListByQueryDto" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment
+        where id >= (
+        select min(id) from (select
+        id
+        from camel_comment
+        where delete_flag = 0
+        <include refid="getCommentListQueryCondition"/>
+        order by id desc limit #{commentQueryDto.pageSize}) a
+        )
+        <include refid="getCommentListQueryCondition"/>
+    </select>
+
+    <select id="selectCommentListByCreatetime" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from camel_comment
+        where creat_time = #{createTime}
+        and id <![CDATA[<]]> #{id}
+        <include refid="getCommentListQueryCondition"/>
+    </select>
+
+</mapper>
